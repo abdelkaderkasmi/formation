@@ -7,8 +7,6 @@ import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contr
  */
 contract Admin is Ownable {
 
-     address [] private _whiteListArray;
-     address [] private  _blackListArray;
      mapping (address=>bool) private WhiteList;
      mapping (address=>bool) private BlackList;
 
@@ -17,24 +15,24 @@ contract Admin is Ownable {
     event blacklisted(address _address);
     
     function autoriser (address _address)  public payable onlyOwner{
+        require(!WhiteList[_address],"Already whitelisted");
+        require(!BlackList[_address],"Already blacklisted");
         WhiteList[_address]=true;
-        _whiteListArray.push(_address);
         emit whitelisted(_address);
     }
 
      function bloquer (address _address)  public payable onlyOwner{
+        require(!WhiteList[_address],"Already whitelisted");
+        require(!BlackList[_address],"Already blacklisted");
         BlackList[_address]=true;
-        _blackListArray.push(_address);
         emit blacklisted(_address);
     }
 
-    function isWhiteListed() public view returns (address) {
-        require(_whiteListArray.length>=0);
-        return _whiteListArray[0];
+    function isWhiteListed(address _address) public view returns (bool) {
+        return WhiteList[_address];
     }
 
-      function isBlackListed() public view returns (address){
-        require(_blackListArray.length>=0);
-        return _blackListArray[0];
+      function isBlackListed(address _address) public view returns (bool){
+        return BlackList[_address];
     }
 }
