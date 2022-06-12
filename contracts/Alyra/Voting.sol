@@ -127,12 +127,12 @@ contract Voting is Ownable{
         return (countVoteBlanc / totalVotes ) * 100;   
     }
 
-    function getTauxAbstention () public view onlyOwner returns (uint){ // retorune le taux d'abstention = nb votant / nb inscrit * 100
+    function getTauxParticipation () public view onlyOwner returns (uint){ // retorune le taux de participation = nb votant / nb inscrit * 100
         return (totalRegisterdVoted / totalRegistered) * 100; 
     }
 
-    function getTauxParticipation () public view onlyOwner returns (uint){ // retorune le taux de participation
-        return 100 - getTauxAbstention(); 
+    function  getTauxAbstention() public view onlyOwner returns (uint){ // retorune le taux d'abstention
+        return 100 - getTauxParticipation(); 
     }
 
 }
