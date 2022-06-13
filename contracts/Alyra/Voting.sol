@@ -9,8 +9,8 @@ import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contr
 
 contract Voting is Ownable{
     
-    //id winning proposal
-    uint public winningProposalId;
+    //id winning proposal, on retourne -1 si pas de gagnant
+    int public winningProposalId = -1;
     
     //compte votes blancs
     uint public countVoteBlanc;
@@ -41,7 +41,7 @@ contract Voting is Ownable{
                 VotesTallied
                 }
     //status du workflow courant pour la gestion des sessions, plus pratiqe que les timestamp
-    WorkflowStatus private currentStatus; 
+    WorkflowStatus private currentStatus = WorkflowStatus.RegisteringVoters; 
     
     //whitelist des electeurs autorisés
     mapping (address=>Voter) public WhiteList ;
@@ -51,11 +51,6 @@ contract Voting is Ownable{
     event ProposalRegistered(uint proposalId);
     event Voted (address voter, uint proposalId);
 
-    constructor()
-    {
-        //init
-        restartProcess ();
-    }
 
     function registerVoter(address _addr) public  onlyOwner { //enregistrement d'un votant
         require (currentStatus == WorkflowStatus.RegisteringVoters, "Registering voters session is over ! Restart process to register new voters" );//session terminé
@@ -107,19 +102,19 @@ contract Voting is Ownable{
         emit Voted(msg.sender, _proposalId);
     }
 
-    function getWinner()  public onlyOwner returns (uint){ //décompte des voix et désignation du proposalId gagnant, une fois le vote terminé
+    function getWinner()  public onlyOwner returns (int){ //décompte des voix et désignation du proposalId gagnant, une fois le vote terminé
         require(currentStatus == WorkflowStatus.VotingSessionEnded, "Voting session is not finished");
         uint total = 0;
         for (uint i = 0 ; i < proposals.length; i++){
                 if (proposals[i].voteCount > total){
                     total = proposals[i].voteCount;
-                    winningProposalId = i;
+                    winningProposalId = int (i);
                 }
         }
 
         currentStatus = WorkflowStatus.VotesTallied;
         emit WorkflowStatusChange(WorkflowStatus.VotingSessionEnded, WorkflowStatus.VotesTallied);
-        return winningProposalId;
+        return total >=countVoteBlanc? winningProposalId : -1; //si vote blanc majoritaire on retourne -1 (pas de gagnant)
     }
 
 
@@ -145,6 +140,7 @@ contract Voting is Ownable{
     function restartProcess () public  onlyOwner(){ //on recommence le process au début
        currentStatus = WorkflowStatus.RegisteringVoters;
        countVoteBlanc = totalRegisterdVoted = totalRegisterdVoted = 0;
+       winningProposalId = -1;
        }
 
 }
