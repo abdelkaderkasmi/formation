@@ -40,7 +40,7 @@ contract Voting is Ownable{
                 VotingSessionEnded,
                 VotesTallied
                 }
-    //status du workflow courant pour la gestion des sessions, plus pratiqe que les timestamp
+    //status du workflow courant pour la gestion des sessions, plus pratiqe que les timestamps
     WorkflowStatus private currentStatus = WorkflowStatus.RegisteringVoters; 
     
     //whitelist des electeurs autorisés
