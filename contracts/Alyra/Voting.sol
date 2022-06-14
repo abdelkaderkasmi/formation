@@ -30,7 +30,11 @@ contract Voting is Ownable{
                 string description;
                 uint voteCount;
                     }   
+    //tableau des proposals                
     Proposal[] public proposals;
+
+    //tableau des addr de voters
+    address [] private voters;
 
     enum WorkflowStatus {
                 RegisteringVoters,
@@ -56,6 +60,7 @@ contract Voting is Ownable{
         require (currentStatus == WorkflowStatus.RegisteringVoters, "Registering voters session is over ! Restart process to register new voters" );//session terminé
         require (!WhiteList[_addr].isRegistered, "Already registered !");
         WhiteList[_addr].isRegistered = true;
+        voters.push(_addr);
         totalRegistered ++;
         currentStatus = WorkflowStatus.RegisteringVoters;
         emit VoterRegistered(_addr);
@@ -142,6 +147,12 @@ contract Voting is Ownable{
        currentStatus = WorkflowStatus.RegisteringVoters;
        countVoteBlanc = totalRegisterdVoted = totalRegisterdVoted = 0;
        winningProposalId = -1;
-       }
+       //on reinit les status isRegisterd et hasVoted de la whitelist
+       for(uint i = 0; i < voters.length; i++){
+           WhiteList[voters[i]].isRegistered = WhiteList[voters[i]].hasVoted = false;
+        }
+
+        delete voters;
+    }
 
 }
