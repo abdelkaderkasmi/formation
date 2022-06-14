@@ -99,6 +99,7 @@ contract Voting is Ownable{
             countVoteBlanc++;
         
         totalRegisterdVoted ++;
+        WhiteList[msg.sender].hasVoted = true;
         emit Voted(msg.sender, _proposalId);
     }
 
