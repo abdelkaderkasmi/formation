@@ -1,0 +1,13 @@
+{
+  "dependencies": {
+    "@openzeppelin/contracts": "^4.6.0",
+    "@openzeppelin/test-helpers": "^0.5.15",
+    "@truffle/hdwallet-provider": "^2.0.9",
+    "dotenv": "^16.0.1"
+  },
+  "devDependencies": {
+    "chai": "^4.3.6",
+    "eth-gas-reporter": "^0.2.25",
+    "mocha": "^10.0.0"
+  }
+}
